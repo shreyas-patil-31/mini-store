@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mini Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 60px auto;
+            background: white;
+            padding: 28px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #cccccc;
+        }
+
+        h1 {
+            text-align: center;
+            color: #263b60;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 24px;
+            background: #263b60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message {
+            text-align: center;
+            color: #18733b;
+            margin-top: 12px;
+        }
+
+        .error {
+            color: #c62828;
+            text-align: center;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mini Store</h1>
+        <p style="text-align:center;">Login to your account</p>
+
+        <p class="message" th:if="${param.registered}">
+            Registration successful! Please log in.
+        </p>
+
+        <p class="message" th:if="${param.logout}">
+            You have logged out successfully.
+        </p>
+
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+
+        <form th:action="@{/login}" method="post">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password"
+                   name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="link">
+            Don't have an account?
+            <a th:href="@{/register}">Register here</a>
+        </div>
+    </div>
+</body>
+</html>

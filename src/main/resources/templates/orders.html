@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Mini Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background: #263b60;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        header a {
+            color: white;
+            margin-right: 18px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .message, .order, .empty {
+            background: white;
+            padding: 20px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 7px #dddddd;
+        }
+
+        .message {
+            color: #18733b;
+        }
+
+        .order h3 {
+            color: #263b60;
+        }
+
+        .order-item {
+            border-top: 1px solid #dddddd;
+            padding: 10px 0;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 19px;
+            color: #18733b;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 5px;
+            background: #263b60;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Mini Store - My Orders</h1>
+    <a th:href="@{/products}">Products</a>
+    <a th:href="@{/cart}">My Cart</a>
+</header>
+
+<main>
+    <h2>Order History</h2>
+
+    <div class="message" th:if="${param.success}">
+        Your order has been placed successfully!
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(orders)}">
+        <p>You haven't placed any orders yet.</p>
+        <a class="button" th:href="@{/products}">Start Shopping</a>
+    </div>
+
+    <div th:each="order : ${orders}" class="order">
+        <h3>
+            Order #<span th:text="${order.id}"></span>
+        </h3>
+
+        <p>
+            Order Date:
+            <span th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}">
+            </span>
+        </p>
+
+        <h4>Items</h4>
+
+        <div th:each="item : ${order.items}" class="order-item">
+            <p>
+                <strong th:text="${item.product.name}"></strong>
+            </p>
+
+            <p>
+                Quantity: <span th:text="${item.quantity}"></span>
+            </p>
+
+            <p>
+                Price per item: ₹<span th:text="${item.price}"></span>
+            </p>
+
+            <p>
+                Subtotal: ₹<span
+                    th:text="${item.price * item.quantity}"></span>
+            </p>
+        </div>
+
+        <p class="total">
+            Total Amount: ₹<span th:text="${order.totalAmount}"></span>
+        </p>
+    </div>
+
+    <a class="button" th:href="@{/products}">Continue Shopping</a>
+</main>
+
+</body>
+</html>

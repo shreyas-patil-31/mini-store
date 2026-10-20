@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Mini Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f2f4f8;
+            color: #222;
+        }
+
+        header {
+            background: #263b60;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 15px;
+            text-decoration: none;
+        }
+
+        nav form {
+            display: inline;
+            margin-left: 15px;
+        }
+
+        nav button {
+            background: #e4eaf3;
+            color: #263b60;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        .filter {
+            background: white;
+            padding: 18px;
+            border-radius: 8px;
+            margin-bottom: 22px;
+        }
+
+        select, button {
+            padding: 9px;
+            border-radius: 5px;
+        }
+
+        .filter button, .add-button {
+            background: #263b60;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #dddddd;
+        }
+
+        .product h3 {
+            color: #263b60;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #18733b;
+        }
+
+        .stock {
+            color: #555;
+        }
+
+        .add-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .empty {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Mini Store</h1>
+
+    <nav>
+        <span th:text="|Welcome, ${loggedInUser.name}!|"></span>
+        <a th:href="@{/cart}">My Cart</a>
+        <a th:href="@{/orders}">My Orders</a>
+
+        <a th:if="${loggedInUser.role == 'ADMIN'}"
+           th:href="@{/admin/products/add}">Add Product</a>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </nav>
+</header>
+
+<main>
+    <h2>Available Products</h2>
+    <p>Browse our products and add your favourites to your cart.</p>
+
+    <div class="filter">
+        <form th:action="@{/products}" method="get">
+            <label for="categoryId">Filter by category:</label>
+
+            <select id="categoryId" name="categoryId">
+                <option value="">All Categories</option>
+
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${selectedCategoryId != null and selectedCategoryId == category.id}">
+                </option>
+            </select>
+
+            <button type="submit">Filter</button>
+            <a th:href="@{/products}">Clear Filter</a>
+        </form>
+    </div>
+
+    <div class="products" th:if="${!#lists.isEmpty(products)}">
+        <div class="product" th:each="product : ${products}">
+            <h3 th:text="${product.name}">Product Name</h3>
+
+            <p th:text="${product.description}">Product description</p>
+
+            <p>
+                Category:
+                <span th:text="${product.category.name}"></span>
+            </p>
+
+            <p class="price">
+                ₹<span th:text="${product.price}"></span>
+            </p>
+
+            <p class="stock">
+                Stock:
+                <span th:text="${product.stock}"></span>
+            </p>
+
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId"
+                       th:value="${product.id}">
+
+                <button class="add-button" type="submit"
+                        th:disabled="${product.stock <= 0}"
+                        th:text="${product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}">
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(products)}">
+        No products found in this category.
+    </div>
+</main>
+
+</body>
+</html>

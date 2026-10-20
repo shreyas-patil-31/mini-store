@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Mini Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background: #263b60;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        header a {
+            color: white;
+            margin-right: 18px;
+        }
+
+        main {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .cart-item, .summary, .empty {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 7px #dddddd;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        button, .button {
+            display: inline-block;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 5px;
+            background: #263b60;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .remove {
+            background: #b3261e;
+        }
+
+        .total {
+            font-size: 22px;
+            font-weight: bold;
+            color: #18733b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Mini Store - Shopping Cart</h1>
+    <a th:href="@{/products}">Continue Shopping</a>
+    <a th:href="@{/orders}">My Orders</a>
+</header>
+
+<main>
+    <h2>Your Cart</h2>
+
+    <div th:if="${session.orderError != null}" class="empty">
+        <p th:text="${session.orderError}"></p>
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(products)}">
+        <p>Your cart is empty.</p>
+        <a class="button" th:href="@{/products}">Browse Products</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(products)}">
+        <div class="cart-item" th:each="product : ${products}">
+            <div>
+                <h3 th:text="${product.name}">Product Name</h3>
+                <p th:text="${product.description}">Description</p>
+
+                <p>
+                    Price: ₹<span th:text="${product.price}"></span>
+                </p>
+
+                <p>
+                    Quantity:
+                    <span th:text="${cart.get(product.id)}"></span>
+                </p>
+
+                <p>
+                    Subtotal: ₹<span
+                        th:text="${product.price * cart.get(product.id)}"></span>
+                </p>
+            </div>
+
+            <form th:action="@{/cart/remove}" method="post">
+                <input type="hidden" name="productId"
+                       th:value="${product.id}">
+                <button class="remove" type="submit">Remove</button>
+            </form>
+        </div>
+
+        <div class="summary">
+            <p class="total">
+                Total: ₹<span th:text="${total}"></span>
+            </p>
+
+            <div class="actions">
+                <form th:action="@{/orders/place}" method="post">
+                    <button type="submit">Place Order</button>
+                </form>
+
+                <a class="button" th:href="@{/products}">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
